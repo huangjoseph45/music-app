@@ -1,0 +1,160 @@
+:root {
+  --primary-color: #0f172a;
+  --secondary-color: #1f2937;
+  --accent-color: rgba(126, 63, 242, 0.5);
+  --text-color: #eef2ff;
+  --subtext-color: #d4d4d8;
+  --light-color: #d8b4fe;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+}
+
+.playlist-image {
+  height: 200px;
+}
+
+.playlist-descriptive-list {
+  justify-content: space-between; /* Distributes space between items (start, middle, end) */
+  align-items: center; /* Vertically aligns items in the center */
+  width: 100%; /* Ensures nav-bar spans the full width */
+  background-color: var(--primary-color);
+  padding: 0.5rem;
+}
+
+.playlist-descriptive-text {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.playlist-songs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.video-list-element {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.video-wrapper {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: left;
+  cursor: pointer;
+  gap: 0.5rem;
+  border: 1px solid var(--gray-color);
+  padding: 0.3rem;
+  max-width: 450px;
+  width: 90%;
+  height: 70px;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+
+.edit-option {
+  height: 70px;
+  width: 70px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: rgb(144, 18, 18);
+  border: 1px solid var(--gray-color);
+  transition: 0.3s ease-out;
+}
+
+.edit-option:hover {
+  background-color: rgba(115, 22, 22, 0.746);
+}
+
+.loading {
+  position: relative;
+  width: 90%;
+  max-width: 450px;
+  height: 70px;
+  border: 1px solid var(--gray-color);
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+.video-wrapper:hover:before,
+.loading:hover:before {
+  content: "";
+  position: absolute; /* Take it out of the normal document flow */
+  top: 0;
+  left: 0;
+  width: 100%; /* Makes it span the full width of the parent */
+  height: 100%; /* If needed, you can set height similarly */
+  background-color: var(--accent-color);
+  opacity: 0.2;
+  z-index: 10;
+}
+
+.video-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 0.5rem;
+}
+
+.song-player-wrapper {
+  position: fixed;
+  background-color: var(--primary-color);
+  z-index: 10000;
+  height: 80%;
+  width: 80%;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.media-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.media-button {
+  margin: 0.5rem;
+  transform: scale(1.8);
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+.media-button:hover {
+  margin: 0.5rem;
+  transform: scale(2) translateY(-1px);
+  cursor: pointer;
+}
+
+.video-data {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.blocker {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 100000;
+}

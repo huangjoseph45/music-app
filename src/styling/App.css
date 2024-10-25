@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+
+body::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+body,
+html {
+  background-color: var(--primary-color);
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  --primary-color: #0f172a;
+  --secondary-color: #1f2937;
+  --accent-color: rgba(126, 63, 242, 0.5);
+  --text-color: #eef2ff;
+  --subtext-color: #d4d4d8;
+  --light-color: #d8b4fe;
+  --gray-color: #3f3f46;
+}
+
+input {
+  border-radius: 20px;
+  padding: 0.5rem 0.8rem 0.5rem 0.8rem;
+  border: 1px solid var(--primary-color);
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+input:focus {
+  outline: solid 0.15rem var(--accent-color);
+}
+
+* {
+  font-size: 1rem;
+  font-family: "Quicksand", sans-serif;
+  box-sizing: border-box;
+  text-decoration: none;
+  -webkit-user-drag: "none";
+  user-select: "none";
+  position: relative;
+}
+
+p,
+a,
+h1,
+h2,
+h3,
+li {
+  color: var(--text-color);
+  margin: 0;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
+ul {
+  display: flex;
+  padding: 0;
+  list-style-type: none; /* Removes default list styling */
+}
+
+li {
+  margin: 0;
+}
+
+sub,
+small,
+::placeholder {
+  color: var(--subtext-color);
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  font-size: 0.8rem;
+}
+
+button,
+.button {
+  padding: 0.5rem 1.2rem 0.5rem 1.2rem;
+  background-color: var(--text-color);
+  color: var(--primary-color);
+  border-radius: 2rem;
+  border: none;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+button:hover,
+.button:hover {
+  box-shadow: 0 8px 20px rgba(126, 63, 242, 0.5),
+    inset 0 3px 10px rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  background-color: var(--light-color);
+  outline: solid 0.3rem var(--accent-color);
+}
+
+.app-logo {
+  border: none;
+  position: relative;
+  height: 100%;
+}
+
+.round {
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
+}
+
+.focus {
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.focus:hover {
+  transform: scale(1.01);
+}
+
+.thumbnail {
+  width: 4.5rem;
+  height: 3rem;
+}
+
+.icon {
+  color: var(--primary-color);
+}
+
+.form {
+  background-color: var(--primary-color);
+  z-index: 9999;
+  padding: 2rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.remove {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  position: absolute;
+  top: -15px;
+  left: calc(100% - 15px);
+}
