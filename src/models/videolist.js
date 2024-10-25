@@ -17,7 +17,7 @@ class VideoList {
     console.log(this.songList);
   }
 
-  async loadDefault() {
+  async loadDefault() { //temporary test code
     const videoIdList = [
       "https://www.youtube.com/watch?v=hQbY_hz7s_o",
       "https://www.youtube.com/watch?v=PIh2xe4jnpk",
