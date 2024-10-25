@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Playlist from "./pages/playlist.jsx";
+import Playlist from "./pages/Playlist.jsx";
 import HomeManager from "./pages/HomeManager.jsx";
 import VideoList from "./models/videolist.js";
 
