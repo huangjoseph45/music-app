@@ -17,7 +17,8 @@ class VideoList {
     console.log(this.songList);
   }
 
-  async loadDefault() { //temporary test code
+  async loadDefault() {
+    //temporary test code
     const videoIdList = [
       "https://www.youtube.com/watch?v=hQbY_hz7s_o",
       "https://www.youtube.com/watch?v=PIh2xe4jnpk",
@@ -157,16 +158,16 @@ class VideoList {
   }
 
   static async getFromAPI(videoId) {
-    if (videoId.toLowerCase().search("youtube")) {
+    if (videoId.toLowerCase().search("youtube") !== -1) {
       const regex =
         /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
       const match = videoId.match(regex);
       videoId = match ? match[1] : null;
     }
-
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${API_KEY}&part=snippet,contentDetails,statistics`;
+    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${API_KEY}&part=snippet,contentDetails`;
     const response = await fetch(url);
     const data = await response.json();
+    console.log(data);
     try {
       if (data.items.length > 0 && data != null && data != "undefined") {
         const videoData = data.items[0];
@@ -260,6 +261,40 @@ class VideoList {
     } catch (error) {
       console.error("Error loading default songs:", error);
       return 0; // Return 0 or handle as needed
+    }
+  }
+
+  async searchSongs(query) {
+    try {
+      const MAX_RESULTS = 150;
+      const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
+        query
+      )}&type=video&maxResults=${MAX_RESULTS}&key=${API_KEY}`;
+
+      const response = await fetch(apiUrl);
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok: " + response.statusText);
+      }
+
+      const data = await response.json();
+
+      // Handle the case where no items are returned
+      if (!data.items || data.items.length === 0) {
+        console.warn("No results found for query:", query);
+        return [];
+      }
+
+      const responseList = data.items.map((item) => ({
+        id: item.id.videoId,
+        videoData: item.snippet,
+      }));
+
+      console.log(responseList);
+      return responseList;
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+      return [];
     }
   }
 }

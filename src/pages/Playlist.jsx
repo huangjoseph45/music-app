@@ -1,24 +1,27 @@
 import "../styling/playlist.css";
 import "../styling/App.css";
-import { useState, useEffect, createContext } from "react";
-import PlayListImage from "../components/playlist-image.jsx";
-import Header from "../components/header.jsx";
-import DescriptionList from "../components/playlist-description-list.jsx";
-import Button from "../components/general-button.jsx";
-import SongList from "../components/song-list.jsx";
-import SearchBar from "../components/search-bar.jsx";
+import { useState, useEffect, createContext, useRef } from "react";
+import PlayListImage from "../components/playlist/playlist-image.jsx";
+import Header from "../components/playlist/header.jsx";
+import DescriptionList from "../components/playlist/playlist-description-list.jsx";
+import Button from "../components/playlist/general-button.jsx";
+import SongList from "../components/playlist/song-list.jsx";
+import SearchBar from "../components/playlist/search-bar.jsx";
 import VideoList from "../models/videolist.js";
 import PropTypes from "prop-types";
-import SongPlayer from "../components/song-player.jsx";
+import SongPlayer from "../components/playlist/song-player.jsx";
 import SongNode from "../models/song-node";
-import { Alert } from "@mui/material";
+import Loading from "../components/playlist/loading.jsx";
+import DecayingNote from "../components/playlist/decaying-note.jsx";
+import LoginButton from "../components/playlist/login-button.jsx";
 
 export const PlayListContext = createContext(null);
 export const RefreshContext = createContext(null);
 export const AllowEditContext = createContext(null);
 export const VideoToPlayContext = createContext(null);
+export const AddSongContext = createContext(null);
 
-let root = null;
+let root;
 let songNode = null;
 let currentSongList = null;
 
@@ -26,6 +29,8 @@ export default function Playlist({ videolist }) {
   const [refresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const [videoToPlay, setVideoToPlay] = useState(null);
+  const [showDecayingNote, setShowDecayingNote] = useState(false);
+  const timeoutRef = useRef(null);
 
   const handleClosePlayer = () => {
     console.log("PLAYER HAS BEEN CLOSED");
@@ -37,8 +42,10 @@ export default function Playlist({ videolist }) {
   };
 
   const handleSongToPlay = (data) => {
-    if (currentSongList === null || currentSongList.length === 0)
+    if (!currentSongList || currentSongList.length === 0) {
       currentSongList = videolist.songList;
+    }
+
     if (data === "nextSong") {
       if (songNode.next != null) {
         songNode = songNode.next;
@@ -48,19 +55,20 @@ export default function Playlist({ videolist }) {
         handleSongToPlay("nextSong");
       }
     } else if (data === "prevSong") {
-      if (songNode.prev != null) {
+      if (songNode?.prev) {
         songNode = songNode.prev;
       }
-    } else if (songNode === null && data != null) {
+    } else if (data === "startShuffle") {
+      getNewSong();
+    } else if (!songNode && data) {
       songNode = new SongNode(data);
       root = songNode;
-      console.log(songNode);
-      setVideoToPlay(songNode);
-      return;
-    } else {
-      getNewSong();
+    } else if (data) {
+      const newNode = new SongNode(data);
+      newNode.prev = songNode;
+      if (songNode) songNode.next = newNode;
+      songNode = newNode;
     }
-
     setVideoToPlay(songNode);
   };
 
@@ -85,8 +93,19 @@ export default function Playlist({ videolist }) {
     console.log("Editing");
   };
 
+  const addSongEffect = () => {
+    setShowDecayingNote(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setShowDecayingNote(false);
+    }, 1000);
+  };
+
   const handleRefresh = () => {
-    setRefresh(!refresh);
+    loadSongs();
     console.log("Refreshed");
   };
 
@@ -99,7 +118,7 @@ export default function Playlist({ videolist }) {
   const loadSongs = async () => {
     try {
       const songs = await videolist.getVideoData();
-      setListData(songs);
+      setListData([...songs]);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -134,11 +153,7 @@ export default function Playlist({ videolist }) {
   }, [searchData]);
 
   if (loading) {
-    return (
-      <div className="wrapper">
-        <p>Loading songs...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   const handleData = (data) => {
@@ -146,38 +161,40 @@ export default function Playlist({ videolist }) {
   };
 
   return (
-    <RefreshContext.Provider value={{ handleRefresh }}>
-      <PlayListContext.Provider value={videolist}>
-        <AllowEditContext.Provider value={{ isEdit, handleEdit }}>
-          <VideoToPlayContext.Provider
-            value={{ handleSongToPlay, handleClosePlayer }}
-          >
-            {videoToPlay && <SongPlayer videoNode={videoToPlay} />}
-            <div className="wrapper">
-              <Header />
-              <SearchBar
-                placeholder="Search in playlist"
-                sendData={handleData}
-              />
-              <PlayListImage />
-              <DescriptionList numSongs={numSongs} duration={duration} />
-              <Button
-                buttonFunction={() => handleSongToPlay()}
-                buttonContent="Shuffle Play"
-              />
+    <AddSongContext.Provider value={addSongEffect}>
+      <RefreshContext.Provider value={{ handleRefresh }}>
+        <PlayListContext.Provider value={videolist}>
+          <AllowEditContext.Provider value={{ isEdit, handleEdit }}>
+            <VideoToPlayContext.Provider
+              value={{ handleSongToPlay, handleClosePlayer }}
+            >
+              {showDecayingNote && <DecayingNote note="Added Song" />}
+              {videoToPlay && <SongPlayer videoNode={videoToPlay} />}
+              <div className="wrapper">
+                <Header playlistTitle="Random List" searchListLength={20} />
+                <SearchBar
+                  placeholder="Search in playlist"
+                  sendData={handleData}
+                />
+                <PlayListImage />
+                <DescriptionList numSongs={numSongs} duration={duration} />
+                <Button
+                  buttonFunction={() => handleSongToPlay("startShuffle")}
+                  buttonContent="Shuffle Play"
+                />
 
-              <SongList listData={listData} />
-            </div>
-          </VideoToPlayContext.Provider>
-        </AllowEditContext.Provider>
-      </PlayListContext.Provider>
-    </RefreshContext.Provider>
+                <SongList listData={listData} />
+                <div className="right-side">
+                  <LoginButton />
+                </div>
+              </div>
+            </VideoToPlayContext.Provider>
+          </AllowEditContext.Provider>
+        </PlayListContext.Provider>
+      </RefreshContext.Provider>
+    </AddSongContext.Provider>
   );
 }
-
-const fakeFunc = () => {
-  return;
-};
 
 Playlist.propTypes = {
   videolist: PropTypes.instanceOf(VideoList),

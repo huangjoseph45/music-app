@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import { faTimes, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 
-const Form = ({
-  formName,
-  placeholder,
-  formFuncName,
-  userInput,
-  deleteForm,
-}) => {
+const Form = ({ formName, placeholder, userInput, deleteForm }) => {
   const [value, setValue] = useState("");
 
   const handleChange = (event) => {
     setValue(event.target.value);
     console.log(value);
+  };
+
+  const checkSubmit = (event) => {
+    if (event && event.key === "Enter") {
+      sendInput();
+    }
   };
 
   const sendInput = () => {
@@ -27,21 +27,25 @@ const Form = ({
   };
 
   return (
-    <div className="wrapper form">
-      <h1>{formName}</h1>
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={handleChange}
-      />
-      <button
-        onClick={() => {
-          sendInput();
-        }}
-      >
-        {formFuncName}
-      </button>
+    <div className="form-body">
+      <h1 className="form-title">{formName}</h1>
+      <div className="form-search">
+        <input
+          type="text"
+          placeholder={placeholder}
+          onKeyDown={checkSubmit}
+          value={value}
+          onChange={handleChange}
+        />
+        <button
+          className="form-search-button"
+          onClick={() => {
+            sendInput();
+          }}
+        >
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
+        </button>
+      </div>
       <button onClick={deleteForm} className="remove">
         <FontAwesomeIcon icon={faTimes} />
       </button>

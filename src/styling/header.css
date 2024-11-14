@@ -1,22 +1,14 @@
-:root {
-  --primary-color: #0f172a;
-  --secondary-color: #1f2937;
-  --accent-color: rgba(126, 63, 242, 0.5);
-  --text-color: #eef2ff;
-  --subtext-color: #d4d4d8;
-}
-
 .nav-bar {
   display: flex;
   justify-content: space-between; /* Distributes space between items (start, middle, end) */
   align-items: center; /* Vertically aligns items in the center */
   padding: 0;
   list-style-type: none; /* Removes default list styling */
-  margin: 0.5rem 0 0 0;
-  width: 100%; /* Ensures nav-bar spans the full width */
+  width: 100vw;
   height: 4rem;
-  background-color: var(--primary-color);
-  padding: 1rem;
+  margin: 0;
+  background-color: var(--secondary-color);
+  padding: 2.5rem;
   position: sticky;
   top: 0px;
   z-index: 9999;
@@ -27,7 +19,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-top: 1rem;
   z-index: 5;
   padding: 0.5rem 1.2rem 0.5rem 1.2rem;
   background-color: var(--text-color);
@@ -98,4 +89,15 @@
 
 .rotate {
   transform: rotate(90deg);
+}
+
+.title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
 }
