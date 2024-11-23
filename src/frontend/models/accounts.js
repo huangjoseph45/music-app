@@ -32,6 +32,4 @@ const checkAccount = (username, password) => {
   }
 };
 
-addAccount("Helo", "world");
-
-checkAccount("Joseph", "Huag");
+export { addAccount, checkAccount };

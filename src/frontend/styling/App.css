@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Quicksand:wght@300..700&display=swap");
 
 body::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Opera */
@@ -293,4 +294,8 @@ button:hover,
 
 .login-button:active {
   background-color: var(--accent-color);
+}
+
+.error-image {
+  width: 15%;
 }

@@ -1,16 +1,3 @@
-:root {
-  --primary-color: #0d1321;
-  --secondary-color: #1d2d44;
-  --accent-color: #748cab;
-  --text-color: #f0ebd8;
-  --subtext-color: #c9c6bbb1;
-  --light-color: #d8b4fe;
-  --extralight-color: #d8b4fe56;
-  --gray-color: #748cab;
-  --dark-blue-color: #0c2b43;
-  --red-color: #dc2626;
-}
-
 .login-wrapper {
   display: flex;
   flex-direction: column;

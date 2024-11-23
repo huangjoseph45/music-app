@@ -15,6 +15,7 @@ class VideoList {
       this.songList = JSON.parse(storedPlaylist);
     }
     console.log(this.songList);
+    this.image = this.songList[0].thumbnails.standard;
   }
 
   async loadDefault() {
@@ -158,35 +159,26 @@ class VideoList {
   }
 
   static async getFromAPI(videoId) {
-    if (videoId.toLowerCase().search("youtube") !== -1) {
+    //extract youtube video id from youtube link
+    if (videoId.toLowerCase().includes("youtube")) {
       const regex =
         /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
       const match = videoId.match(regex);
       videoId = match ? match[1] : null;
     }
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${API_KEY}&part=snippet,contentDetails`;
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log(data);
     try {
-      if (data.items.length > 0 && data != null && data != "undefined") {
-        const videoData = data.items[0];
-        return {
-          id: videoId,
-          title: videoData.snippet.title,
-          duration: VideoList.parseDuration(videoData.contentDetails.duration),
-          channelName: videoData.snippet.channelTitle,
-          tags: videoData.snippet.tags,
-          thumbnails: videoData.snippet.thumbnails,
-        };
-      } else {
-        console.error("Video not found");
+      const response = await fetch(
+        `http://localhost:8923/api/videos/${videoId}`
+      );
+      const data = await response.json();
+      if (!data.id) {
+        return undefined;
       }
-    } catch (error) {
-      console.error("Error fetching videos: " + error);
-    }
 
-    localStorage.setItem(this.playListName, JSON.stringify(this.songList));
+      return data;
+    } catch (error) {
+      console.error("Error fetching message:", error);
+    }
   }
 
   getShuffledSong(remainingSongs) {
@@ -266,32 +258,10 @@ class VideoList {
 
   async searchSongs(query) {
     try {
-      const MAX_RESULTS = 150;
-      const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
-        query
-      )}&type=video&maxResults=${MAX_RESULTS}&key=${API_KEY}`;
-
-      const response = await fetch(apiUrl);
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok: " + response.statusText);
-      }
-
-      const data = await response.json();
-
-      // Handle the case where no items are returned
-      if (!data.items || data.items.length === 0) {
-        console.warn("No results found for query:", query);
-        return [];
-      }
-
-      const responseList = data.items.map((item) => ({
-        id: item.id.videoId,
-        videoData: item.snippet,
-      }));
-
-      console.log(responseList);
-      return responseList;
+      const response = await fetch(`http://localhost:8923/api/search/${query}`);
+      const searchList = await response.json();
+      console.log(searchList);
+      return searchList;
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
       return [];

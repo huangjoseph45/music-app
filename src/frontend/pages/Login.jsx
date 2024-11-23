@@ -1,5 +1,5 @@
 import LoginForm from "../components/login/login-form";
-import "/src/styling/login.css";
+import "../styling/login.css";
 import Icon from "../components/icon";
 import AuthenticateButton from "../components/login/authenticate-button";
 import WarningTag from "../components/login/warning-tag";
@@ -7,13 +7,13 @@ import WarningTag from "../components/login/warning-tag";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = ({ handleLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorMessage, setIsErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const nav = new useNavigate();
+  const nav = useNavigate();
 
   const handlePageChange = (destination) => {
     nav(destination);
@@ -27,10 +27,13 @@ const Login = () => {
     setPassword(value);
   };
 
-  const loginFunc = () => {
-    if (username === "" && password === "") {
+  const loginFunc = async () => {
+    const loginRes = handleLogin(username, password);
+    if (loginRes === 1) {
+      console.log("yay");
+    } else {
       setIsErrorMessage(true);
-      setErrorMessage("Error: Missing Information");
+      setErrorMessage("Error: no account found");
     }
   };
 
@@ -76,7 +79,7 @@ const Login = () => {
           tagContent={errorMessage}
           setErrorMessage={setIsErrorMessage}
         />
-      )}{" "}
+      )}
     </>
   );
 };

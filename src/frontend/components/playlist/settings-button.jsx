@@ -14,7 +14,7 @@ import {
   AddSongContext,
 } from "../../pages/Playlist.jsx";
 import VideoList from "../../models/videolist.js";
-import SearchList from "./search-list";
+import SearchList from "./search-list.jsx";
 import Loading from "./loading.jsx";
 import Draggable, { DraggableCore } from "react-draggable";
 
@@ -64,7 +64,6 @@ const SettingsButton = ({ searchListLength }) => {
           findSongs &&
           !searchedSongs.some((item) => item.searchQuery === formData)
         ) {
-          console.log("Added new to list");
           document.body.style.overflow = "hidden";
           setLoading(true);
           const searchResult = await videolist.searchSongs(formData);

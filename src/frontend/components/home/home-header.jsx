@@ -15,7 +15,7 @@ const HomeHeader = ({ title }) => {
         className="focus app-logo"
         onClick={() => navigate("/home")}
       />
-      <h1 className="title">{title}</h1>
+      <h1 className="title">{`Welcome back, ${title}`}</h1>
       <HomeSettings />
     </ul>
   );

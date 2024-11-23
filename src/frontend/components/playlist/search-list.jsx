@@ -21,7 +21,17 @@ const SearchList = ({ data, showSearchQueries }) => {
 
   const showResult = useCallback(
     (resultList) => {
-      const newList = resultList.map((item) => {
+      let newList = null;
+      console.log(resultList);
+      if (
+        resultList === undefined ||
+        resultList === null ||
+        resultList === "undefined"
+      ) {
+        console.log("sjlkdf");
+        return;
+      }
+      newList = resultList.map((item) => {
         const key = item.id;
         const videoData = item.videoData;
 
