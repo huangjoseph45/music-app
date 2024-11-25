@@ -14,3 +14,4 @@ app.use("/api/videos", findSong);
 app.use("/api/search", searchSongs);
 
 module.exports = app; // Export the app instance
+console.log("Namkhang smells");
