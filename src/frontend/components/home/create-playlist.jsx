@@ -3,7 +3,6 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useContext } from "react";
 import { UserContext } from "../../App";
 import VideoList from "../../models/videolist";
-import SongList from "../playlist/song-list";
 
 const createNewPlaylist = async (user, setUser) => {
   if (user && user !== undefined && user !== "undefined") {
@@ -20,19 +19,19 @@ const createNewPlaylist = async (user, setUser) => {
         },
       ],
     };
-    setUser(updatedUser);
-    console.log(JSON.stringify(updatedUser));
+    setUser(updatedUser); // Triggers re-render through context
   }
 };
 
 const CreatePlaylist = () => {
   const { user, setUser } = useContext(UserContext);
 
+  const handleCreatePlaylist = () => {
+    createNewPlaylist(user, setUser);
+  };
+
   return (
-    <li
-      className="create-playlist-button"
-      onClick={() => createNewPlaylist(user, setUser)}
-    >
+    <li className="create-playlist-button" onClick={handleCreatePlaylist}>
       <FontAwesomeIcon className="plus-icon" icon={faPlus} />
       New Playlist
     </li>
@@ -42,7 +41,7 @@ const CreatePlaylist = () => {
 export default CreatePlaylist;
 export { createNewPlaylist };
 
-//generates a random id
+// Generates a random ID
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };

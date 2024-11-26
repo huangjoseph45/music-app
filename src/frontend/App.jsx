@@ -150,10 +150,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           {user && (
             <>
-              <Route
-                path="/home"
-                element={<HomeManager accountInformation={user} />}
-              />
+              <Route path="/home" element={<HomeManager />} />
               {listRoutes}
             </>
           )}

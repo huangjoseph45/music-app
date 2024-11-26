@@ -2,13 +2,17 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { createNewPlaylist } from "./create-playlist";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../App";
 
 const PlaylistList = ({ lists }) => {
   const { user, setUser, saveData } = useContext(UserContext);
   const [editingTitleId, setEditingTitleId] = useState(null);
-  const [listItems, setListItems] = useState(lists);
+  const [listItems, setListItems] = useState(user.playlists);
+
+  useEffect(() => {
+    setListItems(user.playlists);
+  }, [user]);
 
   const nav = useNavigate();
 
@@ -45,6 +49,7 @@ const PlaylistList = ({ lists }) => {
 
   const handleCreateNewPlaylist = () => {
     createNewPlaylist(user, setUser);
+    setListItems(listItems);
   };
 
   return (
