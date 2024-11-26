@@ -2,8 +2,7 @@ const { MongoClient } = require("mongodb");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
-const uri =
-  "mongodb+srv://huangjoseph45:sOA7yFsIzrX3gIKR@cluster0.kzctt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.DATABASE_CONNECTION_URI;
 
 async function addAccount(
   username,

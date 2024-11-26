@@ -25,3 +25,4 @@ dist-ssr
 src/models/youtube.js
 .vercel
 .env
+src/backend/src/.env
