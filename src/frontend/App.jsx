@@ -16,6 +16,11 @@ function App() {
   const [listRoutes, setListRoutes] = useState();
   const [user, setUser] = useState(null);
 
+  const saveData = (updatedUser) => {
+    console.log("SAVING");
+    setUser(updatedUser);
+  };
+
   useEffect(() => {
     const persistentUser = JSON.parse(localStorage.getItem("user"));
     if (
@@ -65,7 +70,6 @@ function App() {
       if (user !== storedUser) {
         localStorage.setItem("user", JSON.stringify(user));
         const updateAccountResponse = await updateAccount(user);
-        console.log(updateAccountResponse);
       }
     };
     onUserChange();
@@ -138,9 +142,11 @@ function App() {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, saveData }}>
       <Router>
         <Routes>
+          <Route path="*" element={<ErrorPage />} />
+
           <Route path="/" element={<LandingPage />} />
           {user && (
             <>

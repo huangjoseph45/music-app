@@ -33,6 +33,7 @@ export default function Playlist({ videolist }) {
   const [showDecayingNote, setShowDecayingNote] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const timeoutRef = useRef(null);
+  console.log(videolist);
 
   const handleClosePlayer = () => {
     console.log("PLAYER HAS BEEN CLOSED");
@@ -187,7 +188,14 @@ export default function Playlist({ videolist }) {
               {showDecayingNote && <DecayingNote note="Added Song" />}
               {videoToPlay && <SongPlayer videoNode={videoToPlay} />}
               <div className="wrapper">
-                <Header playlistTitle="Random List" searchListLength={20} />
+                <Header
+                  playlistTitle={
+                    videolist && videolist.playListName
+                      ? videolist.playListName
+                      : "Title"
+                  }
+                  searchListLength={20}
+                />
                 <SearchBar
                   placeholder="Search in playlist"
                   sendData={handleData}

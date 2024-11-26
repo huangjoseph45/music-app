@@ -39,7 +39,7 @@ const Login = ({ handleLogin }) => {
         response.status &&
         response.status === 200
       ) {
-        alert("yays");
+        handlePageChange("/home");
         const data = await response;
       } else if (response.status === 404) {
         setIsErrorMessage(true);

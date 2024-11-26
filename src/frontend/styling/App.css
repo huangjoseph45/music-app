@@ -298,4 +298,6 @@ button:hover,
 
 .error-image {
   width: 15%;
+  cursor: pointer;
+  margin: 1rem;
 }

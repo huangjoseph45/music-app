@@ -1,12 +1,16 @@
+import { useNavigate } from "react-router-dom";
+
 const ErrorPage = () => {
+  const nav = new useNavigate();
   return (
     <div className="wrapper">
       <img
         className="error-image"
-        src="src/assets/logo.png"
+        src="src/frontend/assets/logo.png"
         alt="error-image"
+        onClick={() => nav("/")}
       />
-      <h1>Oop, you weren't supposed to do that!</h1>
+      <h1>Oops, you weren't supposed to do that!</h1>
     </div>
   );
 };

@@ -2,54 +2,92 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { createNewPlaylist } from "./create-playlist";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../../App";
 
 const PlaylistList = ({ lists }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, saveData } = useContext(UserContext);
+  const [editingTitleId, setEditingTitleId] = useState(null);
+  const [listItems, setListItems] = useState(lists);
 
   const nav = useNavigate();
+
   const openPlayList = (id) => {
     nav(`/playlist-${id}`);
   };
 
-  const content =
-    lists && lists.length > 0 ? (
-      lists.map((playlist, index) =>
-        playlist ? (
-          // fix key later
-          <li
-            key={playlist.playListName + "ksajdfl;"}
-            className="playlist-list-element"
-            onClick={() => openPlayList(playlist.id)}
-          >
+  const startEditing = (id) => {
+    setEditingTitleId(id);
+  };
+
+  const saveTitle = (id, newTitle) => {
+    setListItems((prev) =>
+      prev.map((playlist) =>
+        playlist.id === id ? { ...playlist, playListName: newTitle } : playlist
+      )
+    );
+    setEditingTitleId(null);
+    const cloneUser = structuredClone(user);
+    cloneUser.playlists = cloneUser.playlists.map((playlist) => {
+      return playlist.id === id
+        ? {
+            ...playlist,
+            playListName: newTitle,
+          }
+        : playlist;
+    });
+    saveData(cloneUser);
+  };
+
+  const checkSubmit = (event, id) => {
+    if (event.key === "Enter") saveTitle(id, event.target.value);
+  };
+
+  const handleCreateNewPlaylist = () => {
+    createNewPlaylist(user, setUser);
+  };
+
+  return (
+    <ul className="playlist-list-wrapper">
+      {listItems && listItems.length > 0 ? (
+        listItems.map((playlist) => (
+          <li key={playlist.id} className="playlist-list-element">
             <img
+              onClick={() => openPlayList(playlist.id)}
               className="playlist-image"
               draggable="false"
               src={playlist.image || ""}
               alt={playlist.playListName || "Video thumbnail"}
             />
             <div className="playlist-text-wrapper">
-              <h3>{playlist.playListName}</h3>
+              {editingTitleId === playlist.id ? (
+                <input
+                  className="playlist-edit-input"
+                  type="text"
+                  defaultValue={playlist.playListName}
+                  onKeyDown={(event) => checkSubmit(event, playlist.id)}
+                  onBlur={(e) => saveTitle(playlist.id, e.target.value)}
+                  autoFocus
+                />
+              ) : (
+                <h3
+                  className="playlist-text"
+                  onClick={() => startEditing(playlist.id)}
+                >
+                  {playlist.playListName}
+                </h3>
+              )}
             </div>
           </li>
-        ) : (
-          <li className="playlist-loading" key={index}>
-            <p> No Results Found </p>
-          </li>
-        )
-      )
-    ) : (
-      <li
-        onClick={() => createNewPlaylist(user, setUser)}
-        className="playlist-loading"
-      >
-        <FontAwesomeIcon className="plus-icon" icon={faPlus} />
-        <p>Create a Playlist </p>
-      </li>
-    );
-
-  return <ul className="playlist-list-wrapper">{content}</ul>;
+        ))
+      ) : (
+        <li onClick={handleCreateNewPlaylist} className="playlist-loading">
+          <FontAwesomeIcon className="plus-icon" icon={faPlus} />
+          <p>Create a Playlist</p>
+        </li>
+      )}
+    </ul>
+  );
 };
 
 export default PlaylistList;

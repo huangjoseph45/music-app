@@ -47,11 +47,7 @@ const SearchList = ({ data, showSearchQueries }) => {
               <img
                 className="thumbnail"
                 draggable="false"
-                src={
-                  videoData.thumbnails?.standard?.url ||
-                  videoData.thumbnails?.default?.url ||
-                  ""
-                }
+                src={videoData.thumbnails?.default?.url || ""}
                 alt={videoData.title || "Video thumbnail"}
               />
               <div className="video-text-wrapper">

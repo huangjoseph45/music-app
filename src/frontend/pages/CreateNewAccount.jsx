@@ -35,7 +35,7 @@ const CreateNewAccount = ({ handleNewAccount }) => {
       console.log(response);
 
       if (response.ok) {
-        alert("yay");
+        handlePageChange("/login");
       } else if (response.status === 409) {
         setIsErrorMessage(true);
         setErrorMessage("Error: account already exists");
