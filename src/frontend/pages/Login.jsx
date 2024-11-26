@@ -28,12 +28,30 @@ const Login = ({ handleLogin }) => {
   };
 
   const loginFunc = async () => {
-    const loginRes = handleLogin(username, password);
-    if (loginRes === 1) {
-      console.log("yay");
-    } else {
+    try {
+      const response = await handleLogin(username, password);
+
+      if (
+        response &&
+        response !== undefined &&
+        response !== "undefined" &&
+        response !== "" &&
+        response.status &&
+        response.status === 200
+      ) {
+        alert("yays");
+        const data = await response;
+      } else if (response.status === 404) {
+        setIsErrorMessage(true);
+        setErrorMessage("Error: no account found");
+      } else {
+        setIsErrorMessage(true);
+        setErrorMessage("Error: something went wrong");
+      }
+    } catch (error) {
+      console.error("Error:", error);
       setIsErrorMessage(true);
-      setErrorMessage("Error: no account found");
+      setErrorMessage("Error: Unable to connect to the server");
     }
   };
 

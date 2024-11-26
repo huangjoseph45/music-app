@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext, createContext } from "react";
 import Playlist from "./pages/Playlist.jsx";
 import HomeManager from "./pages/HomeManager.jsx";
 import Login from "./pages/Login.jsx";
@@ -9,92 +9,159 @@ import CreateNewAccount from "./pages/CreateNewAccount.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 
+export const UserContext = createContext(null);
+const PORT = 8923;
+
 function App() {
-  const [videolist, setVideolist] = useState([]);
   const [listRoutes, setListRoutes] = useState();
-  let accounts = useRef({});
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const initializeVideoList = async () => {
-      const list1 = await new VideoList("1");
-      const list2 = await new VideoList("2");
-      const list3 = await new VideoList("3.5");
-
-      const initializedLists = await [list1, list2, list3];
-      setVideolist(initializedLists);
-
-      accounts.current = {
-        Joseph: {
-          password: "Huang",
-          videoLists: initializedLists,
-        },
-      };
-    };
-
-    initializeVideoList();
+    const persistentUser = JSON.parse(localStorage.getItem("user"));
+    if (
+      persistentUser &&
+      persistentUser !== "undefined" &&
+      persistentUser !== undefined
+    ) {
+      if (persistentUser.sessionExpiration >= Date.now()) {
+        setUser(persistentUser);
+      } else {
+        localStorage.removeItem("user");
+      }
+    }
   }, []);
 
-  if (!videolist) {
-    return <div>Loading...</div>;
-  }
-
   useEffect(() => {
-    setListRoutes(
-      videolist?.map((list, index) => {
-        if (!list) return null; // Skip falsy entries
+    const onUserChange = async () => {
+      if (user?.playlists) {
+        setListRoutes(
+          user.playlists.map((videolist) => {
+            // Debugging: Log `videolist.songlist` before returning the <Route />
 
-        if (!list.playListName) {
-          console.warn(`Missing playListName for index ${index}`);
-          return null;
-        }
-
-        console.log(`Generating route for: ${list.playListName}`);
-        return (
-          <Route
-            key={list.playListName + index} // Unique key for React
-            path={`/playlist-${encodeURIComponent(list.playListName)}`} // Safe path
-            element={<Playlist videolist={list} />}
-          />
+            return (
+              <Route
+                key={videolist.playListName}
+                path={`/playlist-${videolist.id}`}
+                element={
+                  <Playlist
+                    videolist={
+                      new VideoList(
+                        videolist.playListName,
+                        videolist.songList,
+                        videolist.id,
+                        videolist.image
+                      )
+                    }
+                  />
+                }
+              />
+            );
+          })
         );
-      })
-    );
-  }, [videolist]);
+      } else {
+        setListRoutes(null);
+      }
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (user !== storedUser) {
+        localStorage.setItem("user", JSON.stringify(user));
+        const updateAccountResponse = await updateAccount(user);
+        console.log(updateAccountResponse);
+      }
+    };
+    onUserChange();
+  }, [user]);
 
-  const handleLogin = (username, password) => {
-    if (
-      accounts.current[username] !== undefined &&
-      accounts.current[username].password === password
-    ) {
-      console.log("account exists");
-      return 1;
-    } else {
-      return 3;
+  const addAccount = async (username, password) => {
+    let response;
+    try {
+      response = await fetch(`http://localhost:${PORT}/api/account/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          email: "test@example.com",
+          password: password,
+          playlists: [],
+        }),
+      });
+    } catch {
+      response = 409;
+    }
+
+    return response;
+  };
+
+  const updateAccount = async (userToUpdate) => {
+    if (userToUpdate && userToUpdate.name) {
+      let response;
+      try {
+        response = await fetch(`http://localhost:${PORT}/api/account/update`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userToUpdate),
+        });
+      } catch {
+        console.error("ERROR: COULD NOT UPDATE ACCOUNT");
+        response = 404;
+      }
+      return response;
     }
   };
 
+  const handleLogin = async (username, password) => {
+    const url = `http://localhost:${PORT}/api/account/get?username=${username}&password=${password}`;
+    let responseJSON;
+    const response = await fetch(url)
+      .then((response) => {
+        responseJSON = response;
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Data received:", data); // Handle the data
+        if (data.status === 200) {
+          const newUser = data.content;
+          const sessionEndDate = Date.now() + 86400000;
+          newUser["sessionExpiration"] = sessionEndDate;
+          setUser(newUser);
+          localStorage.setItem("user", JSON.stringify(newUser));
+          console.log(newUser);
+        }
+      })
+      .catch((error) => {
+        console.error("Error making the request:", error);
+      });
+    return responseJSON;
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/home"
-          element={
-            <HomeManager
-              accountInformation={{ name: "Joseph", playlists: videolist }}
-            />
-          }
-        />
-        <Route
-          path={`/playlist-${videolist.playListName}`}
-          element={<Playlist videolist={videolist} />}
-        />
-        {listRoutes}
-        <Route path="/login" element={<Login handleLogin={handleLogin} />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/create-new-account" element={<CreateNewAccount />} />
-        <Route path="/error" element={<ErrorPage />} />
-      </Routes>
-    </Router>
+    <UserContext.Provider value={{ user, setUser }}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          {user && (
+            <>
+              <Route
+                path="/home"
+                element={<HomeManager accountInformation={user} />}
+              />
+              {listRoutes}
+            </>
+          )}
+
+          <Route path="/login" element={<Login handleLogin={handleLogin} />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route
+            path="/create-new-account"
+            element={<CreateNewAccount handleNewAccount={addAccount} />}
+          />
+          <Route path="/error" element={<ErrorPage />} />
+        </Routes>
+      </Router>
+    </UserContext.Provider>
   );
 }
 

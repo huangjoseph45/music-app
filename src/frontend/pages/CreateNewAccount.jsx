@@ -5,10 +5,11 @@ import AuthenticateButton from "../components/login/authenticate-button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const CreateNewAccount = () => {
+const CreateNewAccount = ({ handleNewAccount }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorMessage, setIsErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const nav = new useNavigate();
 
@@ -24,8 +25,29 @@ const CreateNewAccount = () => {
     setPassword(value);
   };
 
-  const createNewAccountFunc = () => {
-    if (username === "" && password === "") setIsErrorMessage(true);
+  const createNewAccountFunc = async () => {
+    if (username === "" || password === "") {
+      setIsErrorMessage(true);
+      return;
+    }
+    try {
+      const response = await handleNewAccount(username, password);
+      console.log(response);
+
+      if (response.ok) {
+        alert("yay");
+      } else if (response.status === 409) {
+        setIsErrorMessage(true);
+        setErrorMessage("Error: account already exists");
+      } else {
+        setIsErrorMessage(true);
+        setErrorMessage("Error: something went wrong");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setIsErrorMessage(true);
+      setErrorMessage("Error: Unable to connect to the server");
+    }
   };
 
   return (
@@ -55,7 +77,7 @@ const CreateNewAccount = () => {
       {isErrorMessage && (
         <WarningTag
           key={Date.now()}
-          tagContent={"Error: Missing Information"}
+          tagContent={errorMessage}
           setErrorMessage={setIsErrorMessage}
         />
       )}

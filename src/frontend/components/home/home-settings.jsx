@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CreatePlaylist from "./create-playlist";
 
 const HomeSettings = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +31,9 @@ const HomeSettings = () => {
             icon={faBars}
           />
         </a>
-        <ul className={`dropdown ${isOpen ? "active" : ""}`}></ul>
+        <ul className={`dropdown ${isOpen ? "active" : ""}`}>
+          <CreatePlaylist />
+        </ul>
       </li>
     </>
   );

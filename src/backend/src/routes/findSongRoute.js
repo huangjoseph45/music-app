@@ -3,10 +3,18 @@ const fetch = require("node-fetch");
 const router = express.Router();
 require("dotenv").config();
 
-const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
+const API_KEY = process.env.YOUTUBE_API_KEY;
 
 router.get("/:videoId", async (req, res) => {
   try {
+    console.log(API_KEY);
+    if (!API_KEY) {
+      console.error(
+        "YOUTUBE_API_KEY is missing. Ensure your .env file is set up correctly."
+      );
+      process.exit(1); // Stop the server if API_KEY is missing
+    }
+
     let { videoId } = req.params;
 
     //invalid vidoe id
@@ -25,7 +33,7 @@ router.get("/:videoId", async (req, res) => {
       data.items === "undefined" ||
       data.items === undefined ||
       data.items === null ||
-      data.items.length === 0
+      items === 0
     ) {
       return res.status(404).json({ error: "Video not found" });
     }

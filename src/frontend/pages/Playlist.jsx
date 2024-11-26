@@ -1,6 +1,6 @@
 import "../styling/playlist.css";
 import "../styling/App.css";
-import { useState, useEffect, createContext, useRef } from "react";
+import { useState, useEffect, createContext, useRef, useContext } from "react";
 import PlayListImage from "../components/playlist/playlist-image.jsx";
 import Header from "../components/playlist/header.jsx";
 import DescriptionList from "../components/playlist/playlist-description-list.jsx";
@@ -14,6 +14,7 @@ import SongNode from "../models/song-node";
 import Loading from "../components/playlist/loading.jsx";
 import DecayingNote from "../components/playlist/decaying-note.jsx";
 import LoginButton from "../components/playlist/login-button.jsx";
+import { UserContext } from "../App.jsx";
 
 export const PlayListContext = createContext(null);
 export const RefreshContext = createContext(null);
@@ -30,6 +31,7 @@ export default function Playlist({ videolist }) {
   const [isEdit, setEdit] = useState(false);
   const [videoToPlay, setVideoToPlay] = useState(null);
   const [showDecayingNote, setShowDecayingNote] = useState(false);
+  const { user, setUser } = useContext(UserContext);
   const timeoutRef = useRef(null);
 
   const handleClosePlayer = () => {
@@ -107,6 +109,20 @@ export default function Playlist({ videolist }) {
   const handleRefresh = () => {
     loadSongs();
     console.log("Refreshed");
+    setUser((prevUser) => {
+      const updatedPlaylists = prevUser.playlists.map((playlist) =>
+        playlist.id === videolist.id
+          ? {
+              playListName: videolist.playListName,
+              songList: videolist.songList,
+              image: videolist.image,
+              id: videolist.id,
+            }
+          : playlist
+      );
+
+      return { ...prevUser, playlists: updatedPlaylists };
+    });
   };
 
   const [listData, setListData] = useState([]);

@@ -3,8 +3,8 @@ const fetch = require("node-fetch");
 const router = express.Router();
 require("dotenv").config();
 
-const API_KEY = process.env.REACT_APP_YOUTUBE_API_KEY;
-const MAX_RESULTS = 150;
+const API_KEY = process.env.YOUTUBE_API_KEY;
+const MAX_RESULTS = 50;
 
 router.get("/:searchQuery", async (req, res) => {
   try {

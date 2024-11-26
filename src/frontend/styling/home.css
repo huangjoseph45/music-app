@@ -54,3 +54,40 @@
   white-space: nowrap;
   padding: 0 0.5rem;
 }
+
+.playlist-loading {
+  outline: solid 0.15rem var(--accent-color);
+  padding: 1rem;
+  border-radius: 0.25rem;
+  background-color: var(--secondary-color);
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  gap: 0.5rem;
+}
+
+.playlist-loading:hover {
+  background-color: var(--dark-blue-color);
+}
+
+.plus-icon {
+  font-size: 1.5rem;
+}
+
+.create-playlist-button {
+  color: var(--dark-blue-color);
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  gap: 0.25rem;
+  border-radius: 0.35rem;
+  background-color: var(--text-color);
+}
+
+.create-playlist-button:hover {
+  box-shadow: 0 0 0.1rem 0.25rem var(--accent-color);
+  border-radius: 0.35rem;
+}

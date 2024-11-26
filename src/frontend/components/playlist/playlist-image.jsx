@@ -2,6 +2,7 @@ import "../../styling/playlist.css";
 import "../../styling/App.css";
 import { useRef, useState, useContext, useEffect } from "react";
 import { PlayListContext } from "../../pages/Playlist.jsx";
+import { UserContext } from "../../App.jsx";
 
 const PlayListImage = () => {
   const playListImageContainerStyle = {
@@ -11,15 +12,15 @@ const PlayListImage = () => {
   const hiddenImageInput = useRef(null);
   const [imageToUpload, setImageToUpload] = useState(null);
   const videoList = useContext(PlayListContext);
+  const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
     const defaultPlaylistImage = async () => {
       if (imageToUpload === null) {
         //check if image exists. Implementation must be adjusted after I create a db because this does jack shit now
         try {
-          const videoData = await videoList.getVideoData();
-          const thumbnail = videoData[0].thumbnails.high.url;
-          setImageToUpload(thumbnail);
+          const image = videoList.image;
+          setImageToUpload(image);
         } catch (error) {
           console.error("Error fetching video data:", error);
         }
@@ -33,8 +34,18 @@ const PlayListImage = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        console.log("loaded");
-        setImageToUpload(e.target.result);
+        console.log("File loaded");
+
+        const newImage = e.target.result;
+        setImageToUpload(newImage); // Update state for the uploaded image
+        setUser((prevUser) => {
+          const updatedPlaylists = prevUser.playlists.map((playlist) =>
+            playlist.id === videoList.id
+              ? { ...playlist, image: newImage } // Update the image for the matching playlist
+              : playlist
+          );
+          return { ...prevUser, playlists: updatedPlaylists };
+        });
       };
       reader.readAsDataURL(file);
     }

@@ -1,21 +1,20 @@
 import API_KEY from "./youtube";
+import defaultImage from "../assets/default-image.webp";
 
 class VideoList {
-  constructor(playListName) {
+  constructor(playListName, songList = [], id, image = null) {
     this.playListName = playListName;
-    this.songList = [];
+    this.songList = songList;
+    this.image = image;
+    this.id = id;
 
-    const storedPlaylist = localStorage.getItem(this.playListName);
-
-    if (storedPlaylist === null) {
-      this.loadDefault().then(() => {
-        localStorage.setItem(this.playListName, JSON.stringify(this.songList));
-      });
-    } else {
-      this.songList = JSON.parse(storedPlaylist);
+    if (!this.image) {
+      if (!this.songList[0]) {
+        this.image = defaultImage;
+      } else {
+        this.image = this.songList[0].thumbnails.medium.url;
+      }
     }
-    console.log(this.songList);
-    this.image = this.songList[0].thumbnails.standard;
   }
 
   async loadDefault() {
@@ -198,17 +197,10 @@ class VideoList {
   }
 
   async getVideoData() {
-    if (this.songList.length === 0) {
-      await this.loadDefault();
-    }
     return this.songList;
   }
 
   async searchVideos(query) {
-    if (this.songList.length === 0) {
-      await this.loadDefault();
-    }
-
     const searchArray = this.songList.filter(
       (song) =>
         song != null &&
@@ -225,9 +217,6 @@ class VideoList {
 
   async getNumSongs() {
     try {
-      if (this.songList.length === 0) {
-        await this.loadDefault();
-      }
       const listLength = this.songList.length;
       console.log("Array Length: " + this.songList.length);
       return listLength;
@@ -239,9 +228,6 @@ class VideoList {
 
   async getTotalDuration() {
     try {
-      if (this.songList.length === 0) {
-        await this.loadDefault();
-      }
       let duration = 0;
       for (let i = 0; i < this.songList.length; i++) {
         const song = this.songList[i];
