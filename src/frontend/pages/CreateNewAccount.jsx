@@ -4,6 +4,7 @@ import WarningTag from "../components/login/warning-tag";
 import AuthenticateButton from "../components/login/authenticate-button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+document.body.style.overflow = "visible";
 
 const CreateNewAccount = ({ handleNewAccount }) => {
   const [username, setUsername] = useState("");

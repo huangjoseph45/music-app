@@ -6,6 +6,7 @@ import WarningTag from "../components/login/warning-tag";
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+document.body.style.overflow = "visible";
 
 const Login = ({ handleLogin }) => {
   const [username, setUsername] = useState("");

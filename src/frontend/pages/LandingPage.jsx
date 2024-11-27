@@ -2,6 +2,7 @@ import "../styling/landingpage.css";
 import Button from "../components/playlist/general-button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+document.body.style.overflow = "visible";
 
 const LandingPage = () => {
   const nav = useNavigate();

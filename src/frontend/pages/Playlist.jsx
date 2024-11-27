@@ -48,8 +48,9 @@ export default function Playlist({ videolist }) {
     if (!currentSongList || currentSongList.length === 0) {
       currentSongList = videolist.songList;
     }
-
-    if (data === "nextSong") {
+    if (data === "cycleSong") {
+      songNode = structuredClone(songNode);
+    } else if (data === "nextSong") {
       if (songNode.next != null) {
         songNode = songNode.next;
       } else if (data != undefined) {

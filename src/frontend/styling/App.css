@@ -301,3 +301,7 @@ button:hover,
   cursor: pointer;
   margin: 1rem;
 }
+
+.clicked {
+  color: var(--light-color);
+}

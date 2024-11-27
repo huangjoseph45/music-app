@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
 const ErrorPage = () => {
+  document.body.style.overflow = "visible";
+
   const nav = new useNavigate();
   return (
     <div className="wrapper">

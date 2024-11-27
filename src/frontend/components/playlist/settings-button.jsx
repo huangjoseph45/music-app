@@ -17,6 +17,8 @@ import VideoList from "../../models/videolist.js";
 import SearchList from "./search-list.jsx";
 import Loading from "./loading.jsx";
 import Draggable, { DraggableCore } from "react-draggable";
+import { UserContext } from "../../App.jsx";
+import { useNavigate } from "react-router-dom";
 
 const SettingsButton = ({ searchListLength }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,11 +31,14 @@ const SettingsButton = ({ searchListLength }) => {
   const [formFuncName, setFormFuncName] = useState("");
   const [formData, setFormData] = useState("");
   const [searchedSongs, setSearchedSongs] = useState([]);
+  const [deletePlaylist, setDeletePlaylist] = useState(false);
 
   const videolist = useContext(PlayListContext);
   const { handleRefresh } = useContext(RefreshContext);
   const { handleEdit } = useContext(AllowEditContext);
   const addSongEffect = useContext(AddSongContext);
+  const { user, setUser, saveData } = useContext(UserContext);
+  const nav = new useNavigate();
 
   const showSearchQueries = useRef(null);
 
@@ -47,6 +52,7 @@ const SettingsButton = ({ searchListLength }) => {
   const deleteForm = () => {
     setAddSong(false);
     setFindSongs(false);
+    setDeletePlaylist(false);
     showSearchQueries.current = null;
     document.body.style.overflow = "visible";
   };
@@ -81,6 +87,17 @@ const SettingsButton = ({ searchListLength }) => {
             JSON.stringify(updatedSearchedSongs)
           );
           setLoading(false);
+        }
+      } else if (formFunc === "deletePlaylist") {
+        if (formData === videolist.playListName) {
+          const clonedUser = structuredClone(user);
+          console.log(clonedUser);
+          clonedUser.playlists = clonedUser.playlists.filter(
+            (playlist) => playlist.id !== videolist.id
+          );
+          saveData(clonedUser);
+          document.body.style.overflow = "visible";
+          nav("/home");
         }
       }
     };
@@ -121,6 +138,17 @@ const SettingsButton = ({ searchListLength }) => {
     setFindSongs(true);
   };
 
+  const deleteThisPlaylist = () => {
+    document.body.style.overflow = "hidden";
+    setFormName("Delete Playlist?");
+    setAddSong(false);
+    setFindSongs(false);
+    setDeletePlaylist(true);
+    setFormFuncName("Delete Playlist");
+    setPlaceholder("Playlist Name");
+    setFormFunc("deletePlaylist");
+  };
+
   const options = () => {
     setIsOpen(!isOpen);
   };
@@ -132,6 +160,20 @@ const SettingsButton = ({ searchListLength }) => {
   return (
     <>
       <>
+        {deletePlaylist && (
+          <Draggable>
+            <div className="form">
+              <Form
+                formName={formName}
+                placeholder={placeholder}
+                formFunc={formFunc}
+                formFuncName={formFuncName}
+                userInput={handleUserInput}
+                deleteForm={deleteForm}
+              />
+            </div>
+          </Draggable>
+        )}
         {addSong && (
           <Draggable>
             <div className="form">
@@ -179,14 +221,14 @@ const SettingsButton = ({ searchListLength }) => {
           />
         </a>
         <ul className={`dropdown ${isOpen ? "active" : ""}`}>
-          <li onClick={addNewSong} className="dropdown-element">
+          <li className="dropdown-element" onClick={addNewSong}>
             <a className="dropdown-text-wrapper" href="#">
               <AddIcon className="icon" />
               <p className="dropdown-text">Add Song</p>
             </a>
           </li>
-          <li className="dropdown-element">
-            <a className="dropdown-text-wrapper" href="#" onClick={findSong}>
+          <li className="dropdown-element" onClick={findSong}>
+            <a className="dropdown-text-wrapper" href="#">
               <SearchIcon className="icon" />
               <p className="dropdown-text">Find Songs</p>
             </a>
@@ -197,7 +239,7 @@ const SettingsButton = ({ searchListLength }) => {
               <p className="dropdown-text">Edit Songs</p>
             </a>
           </li>
-          <li className="dropdown-element">
+          <li className="dropdown-element" onClick={deleteThisPlaylist}>
             <a className="dropdown-text-wrapper" href="#">
               <DeleteIcon className="icon" />
               <p className="dropdown-text">Delete Playlist</p>

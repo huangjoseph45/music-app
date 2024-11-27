@@ -54,11 +54,12 @@ const SongPlayer = ({ videoNode }) => {
   const [pauseState, setPauseState] = useState(false);
   const [sessionSongs, setSessionSongs] = useState();
   const [minimized, setMinimized] = useState(false);
+  const [cycle, setCycle] = useState(false);
 
   const playerRef = useRef(null);
 
-  const { handleClosePlayer } = useContext(VideoToPlayContext);
-  const { handleSongToPlay } = useContext(VideoToPlayContext);
+  const { handleClosePlayer, handleSongToPlay } =
+    useContext(VideoToPlayContext);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -84,7 +85,8 @@ const SongPlayer = ({ videoNode }) => {
   };
 
   const playNextSong = () => {
-    handleSongToPlay("nextSong");
+    if (cycle) handleSongToPlay("cycleSong");
+    else handleSongToPlay("nextSong");
   };
 
   const playPrevSong = () => {
@@ -98,10 +100,11 @@ const SongPlayer = ({ videoNode }) => {
 
   const onPlayerReady = (event) => {
     playerRef.current = event.target;
+    playerRef.current.playVideo();
     setTimeout(() => {
       playerRef.current.playVideo();
       playerRef.current.unMute();
-    }, 1);
+    }, 50);
   };
 
   const minimize = () => {
@@ -109,7 +112,6 @@ const SongPlayer = ({ videoNode }) => {
   };
 
   useEffect(() => {
-    console.log(minimized);
     if (minimized === true) {
       document.body.style.overflow = "visible";
     } else {
@@ -120,7 +122,12 @@ const SongPlayer = ({ videoNode }) => {
   const onPlayerStateChange = (event) => {
     if (event.data === 0) {
       console.log("Video ended");
-      playNextSong();
+      if (cycle) {
+        playerRef.current.seekTo(0);
+        playerRef.current.playVideo();
+      } else {
+        playNextSong();
+      }
     }
     if (event.data === 1) {
       // Player is playing
@@ -129,6 +136,11 @@ const SongPlayer = ({ videoNode }) => {
       // Player is paused
       setPauseState(true);
     }
+  };
+
+  const cycleSong = () => {
+    console.log("CYCLING");
+    setCycle(!cycle);
   };
 
   useEffect(() => {
@@ -198,7 +210,10 @@ const SongPlayer = ({ videoNode }) => {
           <li className="media-button" onClick={() => playNextSong()}>
             <FontAwesomeIcon icon={faForward} />
           </li>
-          <li className="media-button">
+          <li
+            className={`media-button ${cycle && "clicked"}`}
+            onClick={cycleSong}
+          >
             <FontAwesomeIcon icon={faSyncAlt} />
           </li>
         </ul>
