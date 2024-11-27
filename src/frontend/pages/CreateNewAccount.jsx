@@ -3,7 +3,8 @@ import Icon from "../components/icon";
 import WarningTag from "../components/login/warning-tag";
 import AuthenticateButton from "../components/login/authenticate-button";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../App";
 document.body.style.overflow = "visible";
 
 const CreateNewAccount = ({ handleNewAccount }) => {
@@ -11,8 +12,24 @@ const CreateNewAccount = ({ handleNewAccount }) => {
   const [password, setPassword] = useState("");
   const [isErrorMessage, setIsErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { user, setUser } = useContext(UserContext);
 
   const nav = new useNavigate();
+
+  useEffect(() => {
+    if (user !== null) {
+      nav("/home");
+    }
+    const keyDown = (event) => {
+      if (event.key === "Enter") loginFunc();
+    };
+
+    document.addEventListener("keydown", keyDown);
+
+    return () => {
+      document.removeEventListener("keydown", keyDown);
+    };
+  });
 
   const handlePageChange = (destination) => {
     nav(destination);

@@ -1,11 +1,28 @@
 import "../styling/landingpage.css";
 import Button from "../components/playlist/general-button";
-import { useState } from "react";
+import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../App";
 document.body.style.overflow = "visible";
 
 const LandingPage = () => {
   const nav = useNavigate();
+  const { user, setUser } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user !== null) {
+      nav("/home");
+    }
+    const keyDown = (event) => {
+      if (event.key === "Enter") loginFunc();
+    };
+
+    document.addEventListener("keydown", keyDown);
+
+    return () => {
+      document.removeEventListener("keydown", keyDown);
+    };
+  });
 
   const signupFunc = () => {
     nav("/create-new-account");

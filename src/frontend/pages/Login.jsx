@@ -3,8 +3,8 @@ import "../styling/login.css";
 import Icon from "../components/icon";
 import AuthenticateButton from "../components/login/authenticate-button";
 import WarningTag from "../components/login/warning-tag";
-
-import { useState, useRef } from "react";
+import { UserContext } from "../App";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 document.body.style.overflow = "visible";
 
@@ -13,8 +13,24 @@ const Login = ({ handleLogin }) => {
   const [password, setPassword] = useState("");
   const [isErrorMessage, setIsErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { user } = useContext(UserContext);
 
   const nav = useNavigate();
+
+  useEffect(() => {
+    if (user !== null) {
+      nav("/home");
+    }
+    const keyDown = (event) => {
+      if (event.key === "Enter") loginFunc();
+    };
+
+    document.addEventListener("keydown", keyDown);
+
+    return () => {
+      document.removeEventListener("keydown", keyDown);
+    };
+  });
 
   const handlePageChange = (destination) => {
     nav(destination);
