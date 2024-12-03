@@ -45,7 +45,7 @@ router.get("/:videoId", async (req, res) => {
       duration: parseDuration(videoData.contentDetails.duration),
       channelName: videoData.snippet.channelTitle,
       tags: videoData.snippet.tags || [],
-      thumbnails: videoData.snippet.thumbnails,
+      thumbnails: videoData.snippet.thumbnails.default || null,
     };
 
     res.json(parsedData);

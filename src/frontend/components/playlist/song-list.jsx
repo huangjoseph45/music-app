@@ -6,8 +6,7 @@ import {
   VideoToPlayContext,
 } from "../../pages/Playlist";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsSpin } from "@fortawesome/free-solid-svg-icons";
+import AddIcon from "@mui/icons-material/Add";
 
 const SongList = ({ listData }) => {
   const { isEdit } = useContext(AllowEditContext);
@@ -63,8 +62,10 @@ const SongList = ({ listData }) => {
   //   };
   // }, [listData, videolist.songList.length, videolist.songList]);
 
-  const content = currentSongList.map((video, index) =>
-    video ? (
+  let content;
+  content = currentSongList.map((video, index) => {
+    console.log(video.thumbnails);
+    return video ? (
       <li key={video.id} className="video-list-element">
         <div className="video-wrapper" onClick={() => playVideo(video)}>
           <img
@@ -73,6 +74,7 @@ const SongList = ({ listData }) => {
             src={
               video.thumbnails?.standard?.url ||
               video.thumbnails?.default?.url ||
+              video.thumbnails.url ||
               ""
             }
             alt={video.title || "Video thumbnail"}
@@ -92,25 +94,21 @@ const SongList = ({ listData }) => {
       <li className="loading" key={index}>
         <p> No Results Found </p>
       </li>
-    )
+    );
+  });
+
+  console.log(content);
+
+  content.push(
+    <li key="add-song-list-element" className="video-list-element">
+      <div className="video-wrapper">
+        <AddIcon className="element-icon" />
+        Find Song
+      </div>
+    </li>
   );
 
-  if (!listData || listData.length === 0) {
-    return <p className="loading">No Results Found</p>;
-  }
-
-  return (
-    <ul className="playlist-songs-list">
-      {content}
-      {/* {content.length > 0 && (
-        <div id="list-end" ref={targetRef}>
-          {isLoading && (
-            <FontAwesomeIcon className="spinning-arrow" icon={faArrowsSpin} />
-          )}
-        </div>
-      )} */}
-    </ul>
-  );
+  return <ul className="playlist-songs-list">{content}</ul>;
 };
 
 SongList.propTypes = {

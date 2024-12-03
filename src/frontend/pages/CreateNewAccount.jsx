@@ -9,6 +9,7 @@ document.body.style.overflow = "visible";
 
 const CreateNewAccount = ({ handleNewAccount }) => {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorMessage, setIsErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -23,6 +24,7 @@ const CreateNewAccount = ({ handleNewAccount }) => {
     const keyDown = (event) => {
       if (event.key === "Enter") loginFunc();
     };
+    document.title = `Create New Account`;
 
     document.addEventListener("keydown", keyDown);
 
@@ -33,6 +35,10 @@ const CreateNewAccount = ({ handleNewAccount }) => {
 
   const handlePageChange = (destination) => {
     nav(destination);
+  };
+
+  const handleEmailField = (value) => {
+    setEmail(value);
   };
 
   const handleUserNameField = (value) => {
@@ -49,7 +55,7 @@ const CreateNewAccount = ({ handleNewAccount }) => {
       return;
     }
     try {
-      const response = await handleNewAccount(username, password);
+      const response = await handleNewAccount(email, username, password);
       console.log(response);
 
       if (response.ok) {
@@ -74,6 +80,12 @@ const CreateNewAccount = ({ handleNewAccount }) => {
         <Icon />
         <h1 className="welcome-image">Create an Account</h1>
         <div className="inputs-wrapper">
+          <LoginForm
+            type="text"
+            label="Email"
+            id="email"
+            changeFunction={handleEmailField}
+          />
           <LoginForm
             type="text"
             label="Username"

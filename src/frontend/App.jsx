@@ -75,7 +75,7 @@ function App() {
     onUserChange();
   }, [user]);
 
-  const addAccount = async (username, password) => {
+  const addAccount = async (email, username, password) => {
     let response;
     try {
       response = await fetch(`http://localhost:${PORT}/api/account/add`, {
@@ -85,7 +85,7 @@ function App() {
         },
         body: JSON.stringify({
           username: username,
-          email: "test@example.com",
+          email: email,
           password: password,
           playlists: [],
         }),

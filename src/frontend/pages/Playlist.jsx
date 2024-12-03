@@ -146,6 +146,7 @@ export default function Playlist({ videolist }) {
 
   useEffect(() => {
     loadSongs();
+    document.title = `${videolist.playListName}`;
   }, []); // dependency array required to only run on inital load
 
   useEffect(() => {

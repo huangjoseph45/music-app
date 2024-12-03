@@ -86,7 +86,9 @@ async function findAccount(username, password) {
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
 
-    const user = await collection.findOne({ name: username });
+    const user =
+      (await collection.findOne({ name: username })) ||
+      (await collection.findOne({ email: username }));
     if (!user) {
       return { status: 404, message: "User not found" };
     }

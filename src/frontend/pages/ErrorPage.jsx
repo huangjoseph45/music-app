@@ -7,12 +7,10 @@ const ErrorPage = () => {
   const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
-    if (user !== null) {
-      nav("/home");
-    }
     const keyDown = (event) => {
       if (event.key === "Enter") loginFunc();
     };
+    document.title = `Error!`;
 
     document.addEventListener("keydown", keyDown);
 

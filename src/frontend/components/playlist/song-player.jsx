@@ -107,10 +107,6 @@ const SongPlayer = ({ videoNode }) => {
     }, 50);
   };
 
-  const minimize = () => {
-    setMinimized(!minimized);
-  };
-
   useEffect(() => {
     if (minimized === true) {
       document.body.style.overflow = "visible";
@@ -145,13 +141,12 @@ const SongPlayer = ({ videoNode }) => {
 
   useEffect(() => {
     const handleKeyPress = (event) => {
-      if (event.key === " ") {
+      if (event.key === " " && minimized === false) {
         event.preventDefault();
         pauseSong();
       }
     };
     if (playerRef.current) {
-      console.log(pauseState);
       if (pauseState) {
         playerRef.current.pauseVideo();
       } else {
@@ -164,7 +159,7 @@ const SongPlayer = ({ videoNode }) => {
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [pauseState]);
+  }, [pauseState, minimized]);
 
   return (
     <div className={`song-player-wrapper ${minimized ? "minimize" : ""}`}>
@@ -172,7 +167,7 @@ const SongPlayer = ({ videoNode }) => {
         <FontAwesomeIcon icon={faTimes} />
       </button>
       <div
-        onClick={minimize}
+        onClick={() => setMinimized(!minimized)}
         className={`minimize-button ${minimized ? "minimized-button" : ""}`}
       >
         <p className={`minimize-icon ${minimized ? "flip" : ""}`}>{">"}</p>

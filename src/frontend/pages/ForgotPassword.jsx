@@ -9,6 +9,8 @@ const ForgotPassword = () => {
     if (user !== null) {
       nav("/home");
     }
+    document.title = `Forgot Password`;
+
     const keyDown = (event) => {
       if (event.key === "Enter") loginFunc();
     };

@@ -244,3 +244,7 @@
   padding: 0.5rem;
   border-radius: 1rem;
 }
+
+.element-icon {
+  color: var(--text-color);
+}

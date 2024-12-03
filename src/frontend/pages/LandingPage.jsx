@@ -18,6 +18,7 @@ const LandingPage = () => {
     };
 
     document.addEventListener("keydown", keyDown);
+    document.title = `Chime`;
 
     return () => {
       document.removeEventListener("keydown", keyDown);

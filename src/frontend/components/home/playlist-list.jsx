@@ -4,6 +4,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { createNewPlaylist } from "./create-playlist";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../App";
+import AddIcon from "@mui/icons-material/Add";
 
 const PlaylistList = ({ lists }) => {
   const { user, setUser, saveData } = useContext(UserContext);

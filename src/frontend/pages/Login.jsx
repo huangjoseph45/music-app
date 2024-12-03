@@ -24,6 +24,7 @@ const Login = ({ handleLogin }) => {
     const keyDown = (event) => {
       if (event.key === "Enter") loginFunc();
     };
+    document.title = `Login`;
 
     document.addEventListener("keydown", keyDown);
 
